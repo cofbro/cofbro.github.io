@@ -1,0 +1,657 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/cofbroxg.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="cofbro">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="算法练习-02">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法练习：统计好数字的数目（快速幂）">
+<meta property="og:url" content="http://example.com/2022/05/13/fastMi/index.html">
+<meta property="og:site_name" content="cofbro的博客">
+<meta property="og:description" content="算法练习-02">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s3.bmp.ovh/imgs/2022/05/12/b44d7ddc8c00144d.jpg">
+<meta property="article:published_time" content="2022-05-13T08:23:37.000Z">
+<meta property="article:modified_time" content="2022-05-12T10:02:04.449Z">
+<meta property="article:author" content="cofbro">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="算法练习">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://s3.bmp.ovh/imgs/2022/05/12/b44d7ddc8c00144d.jpg">
+  
+  
+  <title>算法练习：统计好数字的数目（快速幂） - cofbro的博客</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":250,"cursorChar":"_","loop":true},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"❡"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":true,"trickleSpeed":200}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":1},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>COFBRO</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" target="_blank" rel="noopener" href="https://github.com/cofbro">
+                <i class="iconfont icon-github-fill"></i>
+                github
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('https://s3.bmp.ovh/imgs/2022/05/12/b44d7ddc8c00144d.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="算法练习：统计好数字的数目（快速幂）">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-05-13 16:23" pubdate>
+        2022年5月13日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      3.1k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      26 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">算法练习：统计好数字的数目（快速幂）</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：1 分钟前
+                
+              </p>
+            
+            <div class="markdown-body">
+              <h2 id="一-前言"><a href="#一-前言" class="headerlink" title="一.前言"></a>一.前言</h2><p>又是在力扣被题折磨的一次，反反复复地提交，反反复复的不通过，不过还好了解到了快速幂的思想，这种方式能大幅提高程序的运行速度。</p>
+<blockquote>
+<p>题目：我们称一个数字字符串是 好数字 当它满足（下标从 0  开始）偶数 下标处的数字为 偶数   且 奇数   下标处的数字为 质数  （2，3，5  或  7）。</p>
+</blockquote>
+<ul>
+<li>比方说，”2582”  是好数字，因为偶数下标处的数字（2  和  8）是偶数且奇数下标处的数字（5 和  2）为质数。但  “3245”  不是 好数字，因为  3  在偶数下标处但不是偶数。<br>给你一个整数  n ，请你返回长度为  n  且为好数字的数字字符串   总数  。由于答案可能会很大，请你将它对  109 + 7  取余后返回  。</li>
+</ul>
+<p>一个 数字字符串   是每一位都由  0  到 9  组成的字符串，且可能包含前导 0.<a target="_blank" rel="noopener" href="https://leetcode.cn/problems/count-good-numbers/">(题目来源：LeetCode）</a></p>
+<h2 id="二-分析"><a href="#二-分析" class="headerlink" title="二.分析"></a>二.分析</h2><p>这道题乍一看似乎挺简单，由于是让我们返回好数字的个数，对于偶数下标来说符合条件的无非就 0,2,4,6,8 这几个数字，而奇数下标只有 1,3,5,7 这四个数字。我们只需要计算每一位上符合条件的数字的个数之积，顶多再模上 1000000007 就是最终答案了。但是真的是这样的吗？</p>
+<ul>
+<li>敲完代码直接提交（自信加蔑视）</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></div></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title">countGoodNumbers</span><span class="hljs-params">(<span class="hljs-type">long</span> n)</span> </span>&#123;<br>        <span class="hljs-type">double</span> result = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">if</span> (n % <span class="hljs-number">2</span> == <span class="hljs-number">0</span>)&#123;<br>            result = (Math.<span class="hljs-built_in">pow</span>(<span class="hljs-number">4</span>,n/<span class="hljs-number">2</span>) * Math.<span class="hljs-built_in">pow</span>(<span class="hljs-number">5</span>,n/<span class="hljs-number">2</span>)) % <span class="hljs-number">1000000007</span>;<br>        &#125;<span class="hljs-keyword">else</span> &#123;<br>            result = (Math.<span class="hljs-built_in">pow</span>(<span class="hljs-number">4</span>,n/<span class="hljs-number">2</span>) * Math.<span class="hljs-built_in">pow</span>(<span class="hljs-number">5</span>,n/<span class="hljs-number">2</span> + <span class="hljs-number">1</span>)) % <span class="hljs-number">1000000007</span>;<br>        &#125;<br>        <span class="hljs-keyword">return</span> (<span class="hljs-type">int</span>) result;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>心想这不就完了吗，很难吗？但是最终结果就是它死活不让我过，卡在了 50：<br><img src="https://s3.bmp.ovh/imgs/2022/05/12/9cda7a82442d9a34.webp" srcset="/img/loading.gif" lazyload alt="迷茫啊..."><br>我***，这哪有什么问题，这都不让过？离谱啊…… 思考一番无果我只能去翻翻源码，这一下又让我有了新的收获：<br><img src="https://s3.bmp.ovh/imgs/2022/05/12/7c450cf14f75d653.webp" srcset="/img/loading.gif" lazyload><br>它是一个本地方法，也就是由 c&#x2F;c++编写的方法，java 能拿来用，而这个 pow 方法返回四舍五入到最接近的 int 值的参数值，而 int 最多只能表示 2147483647（2 的 31 次方-1），但是代码里面的 5 的 50 次方早就超过了其最大值，因此这里已经溢出，错误也就随之产生了。</p>
+<p>行，那我就换个方法，不用这个 pow 方法，我自己写一个能得到指数值的方法不就好了吗？</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 说明：这里举个例子，想简单告诉一下大家这种循环计算时会非常耗时间</span><br><span class="hljs-comment"> */</span><br><br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Test</span> &#123;<br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-built_in">long</span> <span class="hljs-title">normalCal</span>(<span class="hljs-params"><span class="hljs-built_in">int</span> power, <span class="hljs-built_in">int</span> <span class="hljs-keyword">base</span></span>)</span> &#123;<br>        <span class="hljs-built_in">long</span> result = <span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; power; i++) &#123;<br>            result = result * <span class="hljs-keyword">base</span>;<br>        &#125;<br>        <span class="hljs-keyword">return</span> result;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span>(<span class="hljs-params">String[] args</span>)</span> &#123;<br>        <span class="hljs-built_in">long</span> result = normalCal(<span class="hljs-number">30</span>,<span class="hljs-number">5</span> );<br><br>        System.<span class="hljs-keyword">out</span>.println(result);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这里我们求的是 5 的 30 次方，那么就会执行 30 次循环。不难发现其时间复杂度为 O(N),其中 N 为指数。在我们这段代码中还好，要是我换成 5 的 100 次方呢？那么会有以下两个问题：</p>
+<ul>
+<li>1.假如真的是 5 的 200 次方，即使我们用 long 接收，结果也会溢出的，这又会回到前面的问题上去。</li>
+<li>2.就算我们想尽办法正确得到了这个结果，但这会花费大量的时间，这样提交上去肯定会超时，最终也会不成功。<br>那么是否有一种二者问题都解决掉的方案呢？答案肯定是有的，这就是之前我们将要说到的快速幂思想。</li>
+</ul>
+<h2 id="三-快速幂思想"><a href="#三-快速幂思想" class="headerlink" title="三.快速幂思想"></a>三.快速幂思想</h2><p><em>我们先来初步认识下快速幂，给定一个 2 的 12 次方式子让你计算，你拿到这个题后会怎么想呢？</em></p>
+<ul>
+<li>为了计算的简便，我们通常可以将 2 的 12 次方转换为 4 的 6 次方进而转成 16 的 4 次方…进行计算。</li>
+</ul>
+<hr>
+<p>1.快速幂正好是这种思想，在计算机中 2 的 12 次方要循环 12 次，而我们通过将指数减半，底数平方的思想可以减少循环的次数，从而提高性能。就比如上述的 2 的 12 次方：我们通过快速幂的思想思考它是这样的：2 的 12 次方 -&gt; 4 的 6 次方 -&gt; 16 的 3 次方 -&gt; 256 的 1 次方 乘以 16。前者循环了 12 次，而后者只需要循环 4 次，要是有更高指数计算，则能节省循环的次数也就不言而喻了。</p>
+<p>那我们怎么解决因为计算出的值过大而溢出导致出错的问题呢？我们先来了解一下模的运算规律吧：<br><code>a). (a+b)%p=(a%p+b%p)%p</code><br><code>b). (a-b)%p=(a%p-b%p)%p</code><br><code>c). (a*b)%p=(a%p * b%p)%p</code> 2.在这里只需要用到第三条结论，我们可以在计算过程中就开始不断取模，而不是等到最终结果出来之后再模运算，这样就能避免最终答案太大导致出错的问题了。</p>
+<p>因此在进行幂运算时我们可以这样做：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-built_in">long</span> <span class="hljs-title">myAns</span>(<span class="hljs-params">lon <span class="hljs-keyword">base</span>, <span class="hljs-built_in">long</span> index</span>)</span> &#123;<br>    <span class="hljs-built_in">int</span> k = <span class="hljs-number">1000000007</span>;<br>    <span class="hljs-built_in">long</span> result = <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">while</span> (index &gt; <span class="hljs-number">0</span>) &#123;<span class="hljs-comment">//当指数减到1时跳出循环</span><br>        <span class="hljs-keyword">if</span> (index % <span class="hljs-number">2</span> == <span class="hljs-number">1</span>) &#123;<br>            <span class="hljs-comment">//奇数往这儿走，由于这里是奇数，指数减半会有余数，因此我们只需多乘以一个原来的result就行了</span><br>            index = index - <span class="hljs-number">1</span>;<br>            result = result * <span class="hljs-keyword">base</span> % k;<span class="hljs-comment">//乘上原来的底数</span><br>            <span class="hljs-keyword">base</span> = <span class="hljs-keyword">base</span> * <span class="hljs-keyword">base</span> % k;<span class="hljs-comment">//底数平方</span><br>        &#125;<span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-comment">//偶数来这里，这里就是正常的指数减半，底数平方</span><br>            index = index / <span class="hljs-number">2</span>;<br>            <span class="hljs-keyword">base</span> = (<span class="hljs-keyword">base</span> * <span class="hljs-keyword">base</span>) % k;<br>        &#125;<br>    <span class="hljs-comment">//我们可以看到这种方式节约的循环次数是指数级的</span><br>    <span class="hljs-keyword">return</span> result;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>其实上面这个代码还能更精简一些，我们还能对它进行优化。<br>我们来看看整道题的全部代码：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> &#123;<br>    <span class="hljs-comment">//优化后的代码，这个方法就是进行幂运算</span><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-built_in">long</span> <span class="hljs-title">findMyResult</span>(<span class="hljs-params"><span class="hljs-built_in">long</span> <span class="hljs-keyword">base</span>, <span class="hljs-built_in">long</span> index</span>)</span> &#123;<br>        <span class="hljs-built_in">long</span> result = <span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">while</span>(index&gt; <span class="hljs-number">0</span>)&#123;<br>            <span class="hljs-keyword">if</span>(power % <span class="hljs-number">2</span> == <span class="hljs-number">1</span>)&#123;<br>                result = result * <span class="hljs-keyword">base</span> % <span class="hljs-number">1000000007</span>;<br>            &#125;<br>            index = index / <span class="hljs-number">2</span>;<span class="hljs-comment">//奇数除以2会舍去小数点后面的数，能自动实现减1操作</span><br>            <span class="hljs-keyword">base</span> = <span class="hljs-keyword">base</span> * <span class="hljs-keyword">base</span> % <span class="hljs-number">1000000007</span>;<br>        &#125;<br>        <span class="hljs-keyword">return</span> result;<br>    &#125;<br><br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> <span class="hljs-title">countGoodNumbers</span>(<span class="hljs-params"><span class="hljs-built_in">long</span> n</span>)</span> &#123;<br>        <span class="hljs-keyword">if</span>(n % <span class="hljs-number">2</span> == <span class="hljs-number">0</span>)&#123;<br>            <span class="hljs-built_in">long</span> result =  findMyResult(<span class="hljs-number">4</span>,n/<span class="hljs-number">2</span>) % <span class="hljs-number">1000000007</span>;<br>            result = (result * findMyResult(<span class="hljs-number">5</span>,n/<span class="hljs-number">2</span>)) % <span class="hljs-number">1000000007</span>;<br>            <span class="hljs-keyword">return</span> (<span class="hljs-built_in">int</span>) result;<br>        &#125;<span class="hljs-keyword">else</span>&#123;<br>            <span class="hljs-built_in">long</span> result = (findMyResult(<span class="hljs-number">4</span>,n/<span class="hljs-number">2</span>) % <span class="hljs-number">1000000007</span>);<br>            result = (result * findMyResult(<span class="hljs-number">5</span>,n/<span class="hljs-number">2</span> + <span class="hljs-number">1</span>)) %  <span class="hljs-number">1000000007</span>;<br>            <span class="hljs-keyword">return</span> (<span class="hljs-built_in">int</span>) result;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>完 ~</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/Diary/">Diary</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Java/">Java</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E7%AE%97%E6%B3%95%E7%BB%83%E4%B9%A0/">算法练习</a>
+                    
+                  </div>
+                
+              </div>
+              <!-- 
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+               -->
+              <p class="note note-warning">
+                <strong>本文作者: </strong><a href="/">cofbro</a> <br>
+                <strong>本文链接: </strong><a href="http://example.com/2022/05/13/fastMi/">http://example.com/2022/05/13/fastMi/</a> <br>
+                <strong>版权声明: </strong>本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                   </p>
+               
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/05/12/mypost/">
+                        <span class="hidden-mobile">Hello Hexo！一款高效的个人博客框架</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <!-- <footer class="text-center mt-5 py-3"> -->
+  <!-- <div class="footer-content"> -->
+    <!--  <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>  -->
+  <!-- </div> -->
+  <!-- 
+ -->
+  <!-- 
+ -->
+  <!--  -->
+<!-- </footer> -->
+<footer class="text-center mt-5 py-3">
+  
+   <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>  
+  <!-- 添加网站运行时间 -->
+  <div class="footer-content">
+    <div>
+      <span id="timeDate">载入天数...</span>
+      <span id="times">载入时分秒...</span>
+      <script>
+      var now = new Date();
+      function createtime(){
+          var grt= new Date("05/03/2022 00:00:00");//此处修改你的建站时间或者网站上线时间
+          now.setTime(now.getTime()+250);
+          days = (now - grt ) / 1000 / 60 / 60 / 24;
+          dnum = Math.floor(days);
+          hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum);
+          hnum = Math.floor(hours);
+          if(String(hnum).length ==1 ){
+              hnum = "0" + hnum;
+          }
+          minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum);
+          mnum = Math.floor(minutes);
+          if(String(mnum).length ==1 ){
+                    mnum = "0" + mnum;
+          }
+          seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+          snum = Math.round(seconds);
+          if(String(snum).length ==1 ){
+                    snum = "0" + snum;
+          }
+          document.getElementById("timeDate").innerHTML = "🚀 &nbsp"+dnum+"&nbsp天";  //此次自定义显示内容
+          document.getElementById("times").innerHTML = hnum + "&nbsp小时&nbsp" + mnum + "&nbsp分&nbsp" + snum + "&nbsp秒";
+      }  //此次自定义显示内容
+      setInterval("createtime()",250);
+      </script>
+    </div>
+  </div>
+  <!-- 统计访问量信息 -->
+  
+
+  <!-- 个人和备案信息 -->
+  <div>©2020-2021<a target="_blank" rel="noopener" href="https://clearlight.blog.csdn.net/">ClearlightY</a> <a target="_blank" rel="noopener" href="http://beian.miit.gov.cn/">陈ICP备00000000号</a></div>
+   <!-- 
+ -->
+  
+</footer>
+
+<!-- SCRIPTS -->
+<!-- 
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":true,"trickleSpeed":200})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+ -->
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":true,"trickleSpeed":200})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
