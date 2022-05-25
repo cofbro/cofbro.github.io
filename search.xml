@@ -4,6 +4,60 @@
   
     
     <entry>
+      <title>算法练习：回文子字符串的个数（多种方法）</title>
+      <link href="/2022/05/26/huiwenZiChuan/"/>
+      <url>/2022/05/26/huiwenZiChuan/</url>
+      
+        <content type="html"><![CDATA[<h2 id="一-前言"><a href="#一-前言" class="headerlink" title="一.前言"></a>一.前言</h2><p>今天介绍一道相对简单的练习题，同样是来自 LeetCode。</p><p><a href="https://leetcode.cn/problems/a7VOhD/">回文子字符串的个数，给定一个字符串 s ，请计算这个字符串中有多少个回文子字符串。具有不同开始位置或结束位置的子串，即使是由相同的字符组成，也会被视作不同的子串。</a></p><p><code>示例1：</code></p><blockquote><p>输入：s &#x3D; “abc”<br>输出：3<br>解释：三个回文子串: “a”, “b”, “c”</p></blockquote><p><code>示例2：</code></p><blockquote><p>输入：s &#x3D; “aaa”<br>输出：6<br>解释：6 个回文子串: “a”, “a”, “a”, “aa”, “aa”, “aaa”</p></blockquote><p>题目来源：<a href="https://leetcode.cn/problems/a7VOhD/">LeetCode</a></p><h2 id="二-题解"><a href="#二-题解" class="headerlink" title="二.题解"></a>二.题解</h2><p>其实关于回文的题有很多种，而解法更是多种多样，今天介绍两种方法，<code>递归</code>和<code>中心拓展</code>。</p><h4 id="1-递归"><a href="#1-递归" class="headerlink" title="1.递归"></a>1.递归</h4><p>简单来说递归就是一个函数调用自己本身的行为就叫递归。递归具有代码简洁，易读的特点，但是缺点也不容忽视：</p><p>a).运行效率较低。<br>b).可能会导致栈溢出，如果递归次数太多，需要在内存栈中分配空间以保存参数以及临时变量就会过多，当超出栈的容量，就会导致栈溢出。</p><p>我们思路是这样的：首先通过遍历找到所有的子串，然后再判断子串是否是回文。那么怎么判断是否是回文呢？比如这样的一个字符串<code>abcba</code>,我们判断其是否为回文，可以先判断第一个和最后一个字符是否相同，再判断第二个字符和倒数第二个字符是否相同…直到全部判断完毕，这个过程中，我们反复做着相同的工作，因此可以使用递归，来看看代码吧：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">    public int countSubstrings(String s) &#123;</span><br><span class="line">        int result = 0;//最终结果</span><br><span class="line">        //两层循环，从字符串首部开始遍历处所有子字符串</span><br><span class="line">        for (int i = 0; i &lt; s.length(); i++) &#123;</span><br><span class="line">            for (int j = i; j &lt; s.length(); j++) &#123;</span><br><span class="line">                //每个子字符串调用isHuiwen，若返回 true 则 result + 1</span><br><span class="line">                if (isHuiwen(s, i, j)) &#123;</span><br><span class="line">                    result++;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return result;</span><br><span class="line">    &#125;</span><br><span class="line">    //isHuiwen需要三个参数，s 是字符串，i 是子字符串第一个字符，j 是子字符串的最后一个字符</span><br><span class="line">    public static boolean isHuiwen(String s, int i, int j) &#123;</span><br><span class="line">        //两种情况返回true（1,2）</span><br><span class="line">        //1.当子字符串的长度是奇数时，此时回文中心只有一个，当递归到 i == j时，说明全部首尾字符判断完毕，全部相等，返回true</span><br><span class="line">        if (i == j) return true;</span><br><span class="line">        else &#123;</span><br><span class="line">            if (s.charAt(i) != s.charAt(j)) &#123;</span><br><span class="line">                //如果二者不相等，直接返回false，退出递归</span><br><span class="line">                return false;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                //2.当子字符串的长度为偶数，此时回文中心是两个字符，由于上面的if中已经判断 i 和 j是相同的</span><br><span class="line">                //因此到这里也将首尾字符全部判断完毕，全部相等，返回true</span><br><span class="line">                if (i + 1 == j) &#123;</span><br><span class="line">                    return true;</span><br><span class="line">                &#125; else return isHuiwen(s, ++i, --j);</span><br><span class="line">                //如果程序走到这儿，说明不满足上面任意一种情况，因此在调用函数进一步判断 ++i 和 --j 是否相等</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>我们上面这种方法找出子字符串需要两层循环，时间复杂度为 O(n^2) 而判断它是否为回文又是 O(n)，因此总的复杂度为 O(n^3)。显然效率不高，那我们再来看看<a href="https://leetcode.cn/problems/a7VOhD/solution/hui-wen-zi-zi-fu-chuan-de-ge-shu-by-leet-ejfv/">LeetCode 官方题解吧</a>！——中心拓展</p><h4 id="2-中心拓展"><a href="#2-中心拓展" class="headerlink" title="2.中心拓展"></a>2.中心拓展</h4><p>大致思路：我们从每一个可能成为回文中心的点开始，若前后字符相等就拓展，反之，则停止拓展。</p><p>当子字符串是奇数时，回文中心是一个；当子字符串是偶数个时，回文中心是两个。有没有一种方法可以统一二者呢？答案是有的。通过规律我们可以发现：无论子字符串长度是偶数还是奇数，我们都需要遍历 <code>2n - 1</code> 次字符串，换句话说就是有 <code>2n - 1</code> 个回文中心，</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">    public int countSubstrings(String s) &#123;</span><br><span class="line">        int n = s.length(), ans = 0;</span><br><span class="line">        for (int i = 0; i &lt; 2 * n - 1; ++i) &#123;</span><br><span class="line">            //向前拓展从i开始，向后拓展从r开始</span><br><span class="line">            int l = i / 2, r = i / 2 + i % 2;</span><br><span class="line">            //当子字符串个数为偶数时，i 和 r 相等</span><br><span class="line">            while (l &gt;= 0 &amp;&amp; r &lt; n &amp;&amp; s.charAt(l) == s.charAt(r)) &#123;</span><br><span class="line">                //当前后字符相等且 i 和 r 未越界时</span><br><span class="line">                //开始向两边拓展</span><br><span class="line">                --l;</span><br><span class="line">                ++r;</span><br><span class="line">                ++ans;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> LeetCode </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Java </tag>
+            
+            <tag> 算法练习 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>乘积小于 K 的子数组（滑动窗口）</title>
+      <link href="/2022/05/25/%E4%B9%98%E7%A7%AF%E5%B0%8F%E4%BA%8E-K-%E7%9A%84%E5%AD%90%E6%95%B0%E7%BB%84%EF%BC%88%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%EF%BC%89/"/>
+      <url>/2022/05/25/%E4%B9%98%E7%A7%AF%E5%B0%8F%E4%BA%8E-K-%E7%9A%84%E5%AD%90%E6%95%B0%E7%BB%84%EF%BC%88%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%EF%BC%89/</url>
+      
+        <content type="html"><![CDATA[<h2 id="一-前言"><a href="#一-前言" class="headerlink" title="一.前言"></a>一.前言</h2><p>今天奉上的题是来自<a href="https://leetcode.cn/problems/subarray-product-less-than-k/">LeetCode</a>中的一道中等难度的题，但是如果了解滑动窗口的思想，其实这道题也是比较简单的，题目如下：</p><p>给你一个整数数组  <code>nums</code>  和一个整数  <code>k</code> ，请你返回子数组内所有元素的乘积严格小于<code>k</code>  的连续子数组的数目。</p><div class="note success simple"><p><code>示例一：</code></p><p>输入：nums &#x3D; [10,5,2,6], k &#x3D; 100<br>输出：8<br>解释：8 个乘积小于 100 的子数组分别为：[10]、[5]、[2],、[6]、[10,5]、[5,2]、[2,6]、[5,2,6]。<br>需要注意的是 [10,5,2] 并不是乘积小于 100 的子数组。</p><p><code>示例二：</code></p><p>输入：nums &#x3D; [1,2,3], k &#x3D; 0<br>输出：0</p></div><hr><h2 id="二-思考"><a href="#二-思考" class="headerlink" title="二.思考"></a>二.思考</h2><p>像这种从一个数组里面找一些子数组或者子字符串的问题大都可往这方面靠，一般来说都是可以解决的。因此我们大致思路是这样的，同样定义两个指针（一个叫 left，一个叫 i），它们都指向数组的第一个元素。我们用 i 指针来遍历数组，每当 i 指向新的元素时我们都计算 i 指针和 left 指针之间（窗口之间）元素的积并判断一下是否小于 k，若成立则当前子数组就符合条件，用 n 来记录一次。反之，则 i 继续移动下去。</p><p>具体的我们看着代码来解释：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">    public int numSubarrayProductLessThanK(int[] nums, int k) &#123;</span><br><span class="line">        int left = 0，i = 0;//定义左指针和右指针</span><br><span class="line">        int n = 0;//用来记录子数组的个数</span><br><span class="line">        int addtion = 1;//表示子数组中元素的积</span><br><span class="line">        while(left &lt; nums.length)&#123;//首先判断循环条件，当left指针指向nums的最后一个元素时，循环结束</span><br><span class="line">            //循环进来后，计算i和left之间各元素的积</span><br><span class="line">            addtion *= nums[i];</span><br><span class="line">            i++;//i指针向后移动</span><br><span class="line">            if (addtion &gt;= k)&#123;//若子数组中的各元素积大于k</span><br><span class="line">                left++;//说明子数组中元素超出条件范围，将left指针向右移动</span><br><span class="line">                //让i重新和left指向同一元素，开始新一轮的查找，因此addtion也要归为原始状态</span><br><span class="line">                i = left;</span><br><span class="line">                addtion = 1;</span><br><span class="line">            &#125;else n++;//若符合条件，则记录一下，使n+1</span><br><span class="line">            //但是还有一种情况，i到left之间的子数组都符合条件，这时i指向了数组的最后一个元素</span><br><span class="line">            if (i == nums.length)&#123;</span><br><span class="line">                //不能使i越界，因此将两个指针重新合到一块，重新开始新的查找，同理依然重置addtion</span><br><span class="line">                i = left + 1;</span><br><span class="line">                left++;</span><br><span class="line">                addtion = 1;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return n;//返回最后结果</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><hr><h2 id="三-再次思考"><a href="#三-再次思考" class="headerlink" title="三.再次思考"></a>三.再次思考</h2><p>如果理解了上面这个做法的话，那让我们想想是否还有更优解呢？<br>在上面这个做法中，我们每开始一次新的查找，都需要将 i 指针和 left 指针重新指向同一个新的元素，并且 addtion 也需要重置为 1，这样看来这其中确实有不妥之处，那让我们来看看官方的的做法吧。<br><code>LeetCode官方题解：</code></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">    public int numSubarrayProductLessThanK(int[] nums, int k) &#123;</span><br><span class="line">        int n = nums.length, ret = 0;</span><br><span class="line">        int prod = 1, i = 0;//prod相当于我们之前的addtion</span><br><span class="line">        for (int j = 0; j &lt; n; j++) &#123;</span><br><span class="line">            prod *= nums[j];</span><br><span class="line">            //官方给出的代码中以下和我们之前的方法有一点差异</span><br><span class="line">            while (i &lt;= j &amp;&amp; prod &gt;= k) &#123;</span><br><span class="line">                prod /= nums[i];</span><br><span class="line">                i++;</span><br><span class="line">            &#125;</span><br><span class="line">            ret += j - i + 1;//这是i和j指针之间的元素个数，它在数值上等于新增符合条件的子数组个数</span><br><span class="line">        &#125;</span><br><span class="line">        return ret;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><hr><p>思路与分析：整体思想和我们最开始讲的是一样的，只不过在记录子数组个数和重置各元素积这两部进行了优化。</p><p>我们着重讲述 while 中有差异的这段，我们可以这么理解：i 指针相当于第一种方法的 left，j 指针相当于之前的 i。这里 while 中有一个 <code>i &lt;= j</code> 条件，这是用来控制 i 指针的范围的，也就是说 i 指针是不能超过 j 指针的，这样就会有一个好处：因为 <code>j &lt; n</code>，所以 i 就不会超出数组的长度了，也就能避免我们第一种方法还要专门写个<code>if</code>来判断 i 是否越界，简化了代码。代码进入循环后，也就意味着 <code>prod &gt; k</code> 了，这时我们为了符合条件，需要把 i 指针向后移动，而 prod 值只需要除以<code>nums[i]</code>就等于此时窗口中元素的值。这和我们第一种方法相比就显得非常优秀了，我们之前的方法需要每次把 prod 值归 1，然后由要经历 prod 等于原来那个值的过程，这就显得有点多余了。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> LeetCode </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Java </tag>
+            
+            <tag> 算法练习 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>算法练习：统计好数字的数目（快速幂）</title>
       <link href="/2022/05/13/fastMi/"/>
       <url>/2022/05/13/fastMi/</url>
@@ -97,9 +151,9 @@
       
         <tags>
             
-            <tag> Android </tag>
-            
             <tag> Java </tag>
+            
+            <tag> Android </tag>
             
         </tags>
       
@@ -117,7 +171,7 @@
       
       <categories>
           
-          <category> Diary </category>
+          <category> LeetCode </category>
           
       </categories>
       
