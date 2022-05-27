@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>算法练习：只有两个键的键盘（数学法，动态规划）</title>
+      <link href="/2022/05/26/zhi-you-liang-ge-jian-de-jian-pan-by-lee-ussa/"/>
+      <url>/2022/05/26/zhi-you-liang-ge-jian-de-jian-pan-by-lee-ussa/</url>
+      
+        <content type="html"><![CDATA[<h2 id="一-前言"><a href="#一-前言" class="headerlink" title="一.前言"></a>一.前言</h2><p>又到了记录代码的时候了，这道题来自 LeetCode，<a href="https://leetcode.cn/problems/2-keys-keyboard/">只有两个键的键盘</a>：</p><p>最初记事本上只有一个字符 ‘A’ 。你每次可以对这个记事本进行两种操作：<br>Copy All（复制全部）：复制这个记事本中的所有字符（不允许仅复制部分字符）。<br>Paste（粘贴）：粘贴 上一次 复制的字符。<br>给你一个数字  n ，你需要使用最少的操作次数，在记事本上输出 恰好  n  个 ‘A’ 。返回能够打印出  n  个 ‘A’ 的最少操作次数。</p><p>下面给出两个例子：<br><code>示例1：</code></p><blockquote><p>输入：3<br>输出：3<br>解释：<br>最初, 只有一个字符 ‘A’。<br>第 1 步, 使用 Copy All 操作。<br>第 2 步, 使用 Paste 操作来获得 ‘AA’。<br>第 3 步, 使用 Paste 操作来获得 ‘AAA’。</p></blockquote><p><code>示例2：</code></p><blockquote><p>输入：n &#x3D; 1<br>输出：0</p></blockquote><h2 id="二-题解"><a href="#二-题解" class="headerlink" title="二.题解"></a>二.题解</h2><p>首先说说笔者写这道题的经历吧，不怕大家笑话，这道题我足足写了 3 小时…最开始看到这道题的时候我想的是我可以将 n 以前的操作 <code>A</code> 的次数以次数为键用 <code>Hashmap</code> 存起来，然后遇到 <code>n</code> 的时候直接去 <code>Hashmap</code> 里面拿，当我去提交的时候，发现有些测试用例是过不了的，比若说 741。然后我重新思考，发现可以用递归，比如 <code>n = 24</code>，但是由于思考深度不够，又有一些情况没考虑到，去提交的又数次失败…</p><p>由于递归从最开始就没考虑到那种情况，因此改起来特别麻烦，而这不得不使我重新选择一条路出发。所以由此看来啊，做题之前真要静下心来思考，思考范围要广一点。</p><p>接下来就说第一种方法，我称之为数学规律法。</p><h3 id="1-数学规律法"><a href="#1-数学规律法" class="headerlink" title="1.数学规律法"></a>1.数学规律法</h3><p>先举一些简单的例子：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">当输入不同的 n 时，对应输出的值：</span><br><span class="line"></span><br><span class="line">1 = 0</span><br><span class="line">2 = 1 2 --&gt; 2次//因为需要复制一次，粘贴一次，因此是2</span><br><span class="line">7 = 1 2 3 4 5 6 7 --&gt; 7次// 1 + 1 + 1 + 1 + 1 + 1 + 1 = 7</span><br><span class="line">12 = 1 2 3 6 12 --&gt; 6次 //2 + 1 + 2 + 2 = 7</span><br><span class="line">18 = 1 2 3 6 9 18 --&gt; 8次 //2 + 1 + 2 + 1 +2 = 8</span><br><span class="line">25 = 1 2 3 4 5 10 15 20 25 --&gt; 10次 //2 + 1 + 1 + 2 +1 + 1 + 1 + 1 = 10</span><br><span class="line">741 = 35次 --&gt; 这个待会讲</span><br></pre></td></tr></table></figure><p>既然是数学方法，当然要运用强大的数学规律，我们仔细观察一番会发现：如果是质数那么它的最小操作次数就是它本身，对于非质数，比如说 <code>12</code> ，上面得出 <code>6</code> 次答案的过程我们倒着看分成 3 个片段,12 &lt;- 6 || 6 &lt;- 3 || 3 &lt;- 2 &lt;- 1。</p><p>首先来看 12 &lt;- 6 这一个片段，<code>6</code> 如果要成为 <code>12</code> 必须先全部复制再粘贴，也就是说这里会有 2 次操作；再看 6 &lt;- 3，<code>3</code> 如果要成为 <code>6</code> 也必须先全部复制再粘贴，也会有 2 次操作；最后看 3 &lt;- 2 &lt;- 1 这个片段，<code>1</code> 如果要成为 <code>3</code> 需要全部复制、粘贴、粘贴，也就是要 3 次。我们再来看看这样一个东西：<code>12</code> 除以 <code>2</code> 等于 <code>6</code>，这里操作次数+2，<code>6</code> 除以 <code>2</code> 等于 <code>3</code>，这里操作次数+2，<code>3</code> 除以 <code>3</code> 等于 <code>1</code>，这里操作次数+3。2 + 2 + 3 &#x3D; 6。你会惊奇的发现：只需要找到能整除 n 的除数，之后全部加起来就等于最后答案了。</p><p>不相信？再来试一个！<code>25</code> 除以 <code>5</code> 等于 <code>5</code>，操作次数+5；<code>5</code> 除以 <code>5</code> 等于 <code>1</code>，操作次数+5，最终答案：5 + 5 &#x3D; 10。是不是感觉有点神奇？其实这就是质因数的分解，<code>25</code> 能分成 <code> 5</code> 和 <code>5</code>。<code>12</code> 能分成 <code>2</code> 和 <code>2</code> 和 <code>3</code> ，因此最小操作数为 7。因此最上面的 <code>741</code> 分解质因数为 <code>19</code> 和 <code>13</code> 和 <code>3</code>，所以其最小操作数为 <code>35</code>。</p><p>这种方法接近双百，附图：<br><img src="https://s3.bmp.ovh/imgs/2022/05/26/226699885901c278.webp"></p><h4 id="a-数学规律法代码"><a href="#a-数学规律法代码" class="headerlink" title="a).数学规律法代码"></a>a).数学规律法代码</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">    public int minSteps(int n) &#123;</span><br><span class="line">        int result = 0;</span><br><span class="line">        int i;</span><br><span class="line">        //当 n 被分解到 1 时，退出循环</span><br><span class="line">        while(n != 1)&#123;</span><br><span class="line">            for( i = 2; i &lt;= n; i++)&#123;</span><br><span class="line">            //遍历找出能整除 n 的 i</span><br><span class="line">                if(n % i == 0)&#123;</span><br><span class="line">                    n /= i;</span><br><span class="line">                    //result加上能整除 n 的 i</span><br><span class="line">                    result += i;</span><br><span class="line">                    i = 2;//成功整除 n 后，进行新的 i 循环，找出下一个能整除 n 的i</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    return result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><hr><h3 id="2-动态规划-LeetCode-官方题解"><a href="#2-动态规划-LeetCode-官方题解" class="headerlink" title="2.动态规划(LeetCode 官方题解)"></a><a href="https://leetcode.cn/problems/2-keys-keyboard/">2.动态规划(LeetCode 官方题解)</a></h3><h5 id="1-动态规划技巧"><a href="#1-动态规划技巧" class="headerlink" title="1.动态规划技巧"></a>1.动态规划技巧</h5><p>先简单说说动态规划的一些技巧吧。</p><ul><li>确定好 dp 数组的含义，一定要理解 dp[i]所表示的是什么</li><li>动态规划的数据通常是由前面一个数据推导演变而来的，因此需要得出推导公式</li><li>最后就是 dp 数组的初始化了，这个需要额外注意，因为初始化一旦有问题，就会导致最终答案出错</li></ul><h5 id="2-思路"><a href="#2-思路" class="headerlink" title="2.思路"></a>2.思路</h5><p>举个例子，还是拿 <code>12</code> 来说吧，<code>12 = 1 -&gt; 2 -&gt; 3 -&gt; 6 -&gt; 12</code>，我们会发现要得出 <code>12</code> 的最小操作次数，需要知道 <code>6</code> 的最小操作次数再加上复制粘贴的次数（2 次），进而需要知道 <code>3</code> 的最小操作次数再加上复制粘贴的次数（2 次）…总的来说就是如果要找出 <code>i</code> 个 <code>A</code> ，则必定要先找到 <code>i</code> 的因数 <code>j</code> ,而后通过 <code>i / j</code> 次复制粘贴得到 <code>i</code> 个 <code>A</code> 因此会发现这个递推规律：<br><img src="https://s3.bmp.ovh/imgs/2022/05/26/a0cf0451b9b0ab5f.webp" alt="递推公式"><br>其中， <code>j | i</code> 表示 <code>j</code> 能整除 <code>i</code> ，<code>i / j</code> 表示复制粘贴的次数。对于每一个 <code>dp[i]</code> 只需要等于最小的 <code>f[j] + i / j</code>。</p><hr><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">    public int minSteps(int n) &#123;</span><br><span class="line">        int[] f = new int[n + 1];</span><br><span class="line">        for (int i = 2; i &lt;= n; ++i) &#123;</span><br><span class="line">            f[i] = Integer.MAX_VALUE;</span><br><span class="line">            for (int j = 1; j &lt;= i; ++j) &#123;</span><br><span class="line">                if (i % j == 0) &#123;</span><br><span class="line">                    f[i] = Math.min(f[i], f[j] + i / j);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return f[n];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> LeetCode </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Java </tag>
+            
+            <tag> 算法练习 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>算法练习：回文子字符串的个数（多种方法）</title>
       <link href="/2022/05/26/huiwenZiChuan/"/>
       <url>/2022/05/26/huiwenZiChuan/</url>
@@ -151,9 +178,9 @@
       
         <tags>
             
-            <tag> Java </tag>
-            
             <tag> Android </tag>
+            
+            <tag> Java </tag>
             
         </tags>
       
